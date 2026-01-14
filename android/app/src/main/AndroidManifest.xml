@@ -20,6 +20,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <!-- ESTA ES LA ETIQUETA QUE TE FALTABA -->
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
