@@ -1,30 +1,34 @@
-name: Build Android
+name: Rescue Build
 on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
-
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
-
+      
       - run: flutter pub get
-
-      # MAGIA: Esto repara la carpeta android automáticamente en la nube
+      
+      # 1. Regenerar proyecto Android (V2 por defecto)
       - run: flutter create --platforms android .
-
-      # Fix extra de permisos por si acaso
+      
+      # 2. Fix minSdkVersion 21 (Reemplaza texto en build.gradle)
+      - run: |
+          sed -i 's/flutter.minSdkVersion/21/g' android/app/build.gradle
+          # Por si acaso es formato antiguo
+          sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' android/app/build.gradle
+      
+      # 3. Permisos
       - run: |
           sed -i 's/\r$//' android/gradlew
           chmod +x android/gradlew
-      
+          
       - run: flutter build apk --release
       
       - uses: actions/upload-artifact@v4
